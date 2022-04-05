@@ -1,93 +1,73 @@
-//Rock Paper Scissors
-// Pseudocode to start:
-// function computerPlay - returns Rock, Paper, or Scissors randomly
-// function playRound (playerSelection, computerSelection) - returns "You lose! Paper beats rock." etc
-// make function's playerSelection parameter case-insensitive 
-// Write a function called game()
-// Call the playRound function inside of this one to play a 5 round game that keeps score and reports 
-// a winner or loser at the end. 
-// for (let i=0; i < 5; i++) (5 rounds)
-// then use console.log() to display results of each round and the winner at the end
-// use prompt() to get input from the user
-
-function userPlay () { //prompt user for input of 3 options: rock, paper, or scissors & returns their choice, case in-sensitive
-let userChoice = window.prompt("Please type your selection of Rock, Paper, or Scissors: ");
-    return userChoice.toLowerCase(); // converts input into all lowercase, making it so input is case-insensitive
-}
-function computerPlay (){ //returns a random selection from myArray which consists of rock, paper, or scissors.
-    let myArray = ["rock", "paper", "scissors"]; //stores strings rock, paper, scissors in an array called myArray
-    let computerSelection = myArray[Math.floor(Math.random()*myArray.length)]; //selects a random string inside of myArray and stores it in computerSelection
-    return computerSelection; 
-}
-function determineWinner(playerSelection, computerSelection){ //function to determine the winner of a round based on real rock/paper/scissors rules. Contains all possible outcomes
-    if ((playerSelection == "rock") && (computerSelection == "rock")){
-        return "Tie game!"
-    } else if ((playerSelection == "rock") && (computerSelection == "paper")){
-        return "You lose!"
-    } else if ((playerSelection == "rock") && (computerSelection == "scissors")){
-        return "You win!"
-    
-    } else if ((playerSelection == "paper") && (computerSelection == "rock")){
-        return "You win!"
-    } else if ((playerSelection == "paper") && (computerSelection == "paper")){
-        return "Tie game!"
-    } else if ((playerSelection == "paper") && (computerSelection == "scissors")){
-        return "You lose!"
-
-    }  else if ((playerSelection == "scissors") && (computerSelection == "rock")){
-        return "You lose!"
-    } else if ((playerSelection == "scissors") && (computerSelection == "paper")){
-        return "You win!"
-    } else if ((playerSelection == "scissors") && (computerSelection == "scissors")){
-        return "Tie game!"
-    } 
-}
-const playerSelection = userPlay(); //stores result of userPlay() inside variable called playerSelection
-const computerSelection = computerPlay(); //stores result of computerPlay() inside variable called computerSelection
-let playerWins = 0; //variable to store wins of the player
-let computerWins = 0; //variable to store wins of the computer
-let tieGames = 0; //variable to store tied games
-
-function keepScore() { //obtains the result of determineWinner(), stores the results in 3 different variables: playerWins, computerWins, tieGames, and increments them upward accordingly after each round.
-       let result = determineWinner(playerSelection, computerSelection);
-        if (result == "You win!") {
-            return playerWins++;
-        } else if (result == "You lose!"){
-            return computerWins++;
-        } else if (result == "Tie game!"){
-            return tieGames++;
-        } 
+const choices = ["rock", "paper", "scissors"] //global variable: choices, which is an array that contains 3 strings rock, paper, and scissors
+const winners = []; //global variable: winners, which is an empty array
+function game () { //runs the playRound function on a loop, then after it changes the Start Game text of the button to Play new game, then logs the wins in the console
+    for (let i=1; i<=5; i++){ //5 iteration for loop
+      playRound(i);  //passing i as an argument into playRound // tells it to run 5 rounds
     }
-function playRound () {       
-console.log(playerSelection);
-console.log(computerSelection);
-console.log(determineWinner(playerSelection, computerSelection));
-keepScore();
-console.log('Player wins: ', playerWins);
-console.log('Computer wins: ', computerWins);
-console.log('Tie games: ', tieGames);
-} 
-
-function playGame () {
-    for (let i=0; i<=4; i++){ //loop game() 5 times
-        playRound();
-        
-    }    
+    document.querySelector('button').textContent = "Play new game"; //at the end of 5 games, button changes text from Start Game to Play new game
+    logWins(); //finishes game function by calling logWins()
 }
-
-playRound();
-
-
-// function restartGame () {
-//     let playAgain = window.prompt("Play the next round? Y/n:")
-//     return playAgain.toLowerCase();
-//     if (playAgain == "y" || "yes"){
-//         playRound();
-//     } else if (playAgain == "n" || "no"){
-//         console.log("Thanks for playing!")
-//     }
-// }
-
+function playRound (round) { //function that stores results of playerChoice(), computerChoice(), checkWinner(), pushes winner into winners[], displays round results via logRound()
+    const playerSelection = playerChoice(); //stores result of playerChoice in variable: playerSelection
+    const computerSelection = computerChoice(); //stores result of computerChoice() in variable: computerSelection
+    const winner = checkWinner(playerSelection, computerSelection) //stores logical winner of round via checkWinner() and stores it into variable: winner
+    winners.push(winner); //pushes the winner into the winners array
+    logRound(playerSelection, computerSelection, winner, round) //displays the results of each round
+}
+function playerChoice (){ //function that accepts rock, paper, or scissors as valid inputs only (case insensitive) from the player/user
+    let input = prompt ('Type rock, paper or scissors'); // asks user for input, sets what they type into input variable
+    while (input == null){ //if player hits cancel, asks for input again
+        input = prompt ("Type rock, paper, or scissors");
+    }
+    input = input.toLowerCase(); //sets any valid input they type like RoCK to rock, etc
+    let check = validateInput(input); //runs input as a parameter into validateInput, stores it in variable: check is a boolean (true or falase)
+    while (check == false){ //if they misspell rock, paper, or scissors
+        input = prompt( 
+            'Type Rock, Paper, or Scissors. Spelling needs to be exact. Case doesn\'t matter'
+        );
+        while (input == null){ //if player types nothing for input and just hits enter
+            input = prompt ("Type rock, paper, or scissors");
+        }
+    input = input.toLowerCase(); //sets input string to be all lowercase
+    check = validateInput(input); //runs input as a parameter into validateInput, stores it in check
+    }
+    return input; //return the string rock, paper, or scissors. Won't return until it accepts a rock, paper, or scissors input
+}   
+function computerChoice () { //function to have computer randomly select rock/paper/scissors
+    return choices[Math.floor(Math.random()*choices.length)]; //returns rock/paper/or scissors by rounding down to each string, randomly selecting one from the length of the array
+}
+function validateInput(choice){ //validates that the user enters an input
+    return choices.includes(choice); //checks that the input is either rock, paper, or scissors
+    }
+function checkWinner(choicePlayer, choiceComputer){ //this function determines the winner of each round, contains basic logic of real rock, paper, scissors 
+    if (choicePlayer === choiceComputer){ //tie game if player and computer have same choice
+        return 'Ties';
+    } else if (  //when the player wins
+        (choicePlayer === "rock" && choiceComputer =="scissors") || 
+        (choicePlayer === "paper" && choiceComputer =="rock") || 
+        (choicePlayer === "scissors" && choiceComputer =="paper")
+        ){
+        return 'Player';
+    } else { //in all other cases, computer wins
+        return 'Computer';
+    }
+}
+function logWins () { //function to log the wins of a set of games
+    let playerWins = winners.filter((item) => item == "Player").length; //stores the winner in an array called playerWins if item == player, increments +1
+    let computerWins = winners.filter((item)=> item == "Computer").length; //item can be named anything within this array, it is an array element
+    let ties = winners.filter((item) => item == "Ties" ).length; //filter checks each item, the arrow function adds the new item if it is equal to ""Ties" in this case, and keeps expanding and incrementing accordingly
+    console.log("Results:"); //a sort of text placeholder for organization/readability, will display results below this line
+    console.log('Player Wins: ', playerWins);  //displays the amount of rounds Player won
+    console.log('Computer Wins: ', computerWins); //displays the amount of rounds Computer won
+    console.log("Ties:", ties); //displays the amount of round Ties won
+}
+function logRound (playerChoice, computerChoice, winner, round){ //displays round results in the console
+console.log('Round:', round);
+console.log('Player chose: ', playerChoice);
+console.log('Computer chose:', computerChoice);
+console.log(winner, 'Won the round');
+console.log('---------------------') // text placeholder for organization/readability, to separate the rounds in the console
+}
 
 
 

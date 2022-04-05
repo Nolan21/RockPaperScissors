@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Rock Paper Scissors</title>
+    <link rel="stylesheet" href="style.css"> <!--.css should always be in the header-->
 </head>
 <body>
-    <h1>Rock Paper Scissors</h1>
-    <script src="index.js"></script>
-    
+    <div class = "flex-container"> <!--Flex container to hold h1, button, and paragraph text and keep them centered in a column-->
+    <h1>Rock Paper Scissors Game</h1>
+    <button onclick ="game()">"Start Game"</button> <!-- Gives functionality to button "Start Game" - Executes the game() function-->
+    <p>This game is played in the console. On Windows/Linux, press F12 or CTRL SHIFT J to open the console. On Mac, press Option J to open console.</p>
+    </div>
+    <script src="index.js"></script> <!--Javascript file should always be the last thing in the html document-->
 </body>
 </html>
